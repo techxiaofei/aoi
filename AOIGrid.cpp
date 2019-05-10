@@ -34,11 +34,10 @@ void AOIGrid::Leave(uint64_t id, int gid){
 * entity存放的坐标是旧的坐标
 */
 void AOIGrid::Move(const Entity& entity, int x, int y){
-    MoveBroadcast(entity, x, y);
-
     int old_gid = GetGid(entity.x(), entity.y());
     int new_gid = GetGid(x, y);
     if (old_gid == new_gid){
+        MoveBroadcast(entity, x, y);
         return;
     }else{
         Leave(entity.id(), old_gid);
@@ -147,26 +146,6 @@ void AOIGrid::GridEntities(std::unordered_set<uint64_t>& entities, int gid){
     }
 }
 
-/*
-AOIGrid::DIR AOIGrid::GetDir(int gx1, int gy1, int gx2, int gy2){
-    if (gx1 == gx2){
-        if (gy2 > gy1)return AOIGrid::DIR::DIR_UP;
-        else return AOIGrid::DIR::DIR_DOWN;
-    }
-    else if(gy1 == gy2){
-        if (gx2 > gy1)return AOIGrid::DIR::DIR_RIGHT;
-        else return AOIGrid::DIR::DIR_LEFT;
-    }
-    else{
-        if (gx2 > gx1 && gy2 > gy1)return AOIGrid::DIR::DIR_RIGHT_UP;
-        else if (gx2 > gx1 && gy2 < gy1)return AOIGrid::DIR::DIR_RIGHT_DOWN;
-        else if (gx2 < gx1 && gy2 > gy1)return AOIGrid::DIR::DIR_LEFT_UP;
-        else if (gx2 < gx1 && gy2 < gy1)return AOIGrid::DIR::DIR_LEFT_DOWN;
-        else return AOIGrid::DIR::DIR_NULL;
-    }
-}
-*/
-
 void AOIGrid::move_cross_grid(const Entity& entity, int x, int y){
     std::unordered_set<int> leave_grids, enter_grids, move_grids;
     
@@ -185,7 +164,7 @@ void AOIGrid::move_cross_grid(const Entity& entity, int x, int y){
             leave_grids.insert(old_grid_id);
         }
         else{
-            move_grids.insert(old_grid_id);  //TODO,重复了
+            move_grids.insert(old_grid_id);
         }
     }
 
@@ -196,12 +175,11 @@ void AOIGrid::move_cross_grid(const Entity& entity, int x, int y){
         }
     }
 
-    //move_message(entity, move_grids);
     leave_message(entity, leave_grids);
     enter_message(entity, enter_grids);
+    move_message(entity, move_grids);
 }
 
-//TODO,设置callback给外部函数
 void AOIGrid::leave_message(const Entity& entity, std::unordered_set<int> leave_grids){
     std::unordered_set<uint64_t> leave_entities;
     for (auto it : leave_grids){
@@ -209,7 +187,9 @@ void AOIGrid::leave_message(const Entity& entity, std::unordered_set<int> leave_
     }
 
     for (auto id : leave_entities){
-        printf("leave message->to entity:%lu, entityid=%lu,x=%d,y=%d\n",id,entity.id(),entity.x(), entity.y());
+        if (leaveMessageCB_)
+            leaveMessageCB_(entity, id);
+        //printf("leave message->to entity:%lu, entityid=%lu,x=%d,y=%d\n",id,entity.id(),entity.x(), entity.y());
     }
 }
 
@@ -220,7 +200,9 @@ void AOIGrid::enter_message(const Entity& entity, std::unordered_set<int> enter_
     }
 
     for (auto id : enter_entities){
-        printf("enter message->to entity:%lu, entityid=%lu,x=%d,y=%d\n",id,entity.id(),entity.x(), entity.y());
+        if (enterMessageCB_)
+            enterMessageCB_(entity, id);
+        //printf("enter message->to entity:%lu, entityid=%lu,x=%d,y=%d\n",id,entity.id(),entity.x(), entity.y());
     }
 }
 
@@ -231,7 +213,9 @@ void AOIGrid::move_message(const Entity& entity, std::unordered_set<int> move_gr
     }
 
     for (auto id : move_entities){
-        printf("move message->to entity:%lu, entityid=%lu,x=%d,y=%d\n",id,entity.id(),entity.x(), entity.y());
+        if (moveMessageCB_)
+            moveMessageCB_(entity, id);
+        //printf("move message->to entity:%lu, entityid=%lu,x=%d,y=%d\n",id,entity.id(),entity.x(), entity.y());
     }
 }
 

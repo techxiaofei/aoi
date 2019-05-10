@@ -3,17 +3,20 @@
 #include <stdint.h>
 #include <unordered_set>
 #include <unordered_map>
+#include <functional>
 #include "Entity.h"
 
-#define GX 8
-#define GY 8
-#define FACTOR 100
+#define GX 8  //每个格子的宽
+#define GY 8  //每个格子的高
+#define FACTOR 100  //x*FACTOR+y
 
 namespace AOI{
 
 class AOIGrid{
 
 public:
+    typedef std::function<void(const Entity& entity, uint64_t entity_id)> GridsFunctionCB;
+
     AOIGrid(int width, int height){
         width_ = width;
         height_ = height;
@@ -34,6 +37,10 @@ public:
     int width() const{return width_;}
     int height() const{return height_;}
 
+public:
+    void setEnterMessageCB(const GridsFunctionCB& cb){enterMessageCB_ = cb;}
+    void setLeaveMessageCB(const GridsFunctionCB& cb){leaveMessageCB_ = cb;}
+    void setMoveMessageCB(const GridsFunctionCB& cb){moveMessageCB_ = cb;}
 
 private:
     int width_;  //scene width
@@ -42,6 +49,9 @@ private:
     typedef std::unordered_map<int, std::unordered_set<int>> GRIDS;  //gid=>(idlist)
     GRIDS grids_;
 
+    GridsFunctionCB enterMessageCB_;
+    GridsFunctionCB leaveMessageCB_;
+    GridsFunctionCB moveMessageCB_;
 
 private:
     void InitGrids();
@@ -67,10 +77,9 @@ private:
     * */
     void GridEntities(std::unordered_set<uint64_t>& entities, int gid);
 
-    //void Notify(int id, std::unordered_set<uint64_t>& leave_girds, std::unordered_set<uint64_t>& enter_grids);
-
-    //DIR GetDir(int x1, int y1, int x2, int y2);
-
+    /*
+    * 跨格子移动时计算
+    */
     void move_cross_grid(const Entity& entity, int x, int y);
 
 private:

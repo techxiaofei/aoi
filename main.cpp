@@ -1,8 +1,22 @@
+#include <stdint.h>
+#include <stdio.h>
 #include<vector>
 #include "entity.h"
 #include "AOIGrid.h"
 
 using namespace AOI;
+
+void enterNotify(const Entity& entity, uint64_t watcher_id){
+    printf("enterNotify to %lu->entity %lu enter\n", watcher_id, entity.id());
+}
+
+void leaveNotify(const Entity& entity, uint64_t watcher_id){
+    printf("enterNotify to %lu->entity %lu leave\n", watcher_id,  entity.id());
+}
+
+void moveNotify(const Entity& entity, uint64_t watcher_id){
+    printf("enterNotify to %lu->entity %lu move\n", watcher_id,  entity.id());
+}
 
 int main(){
     int width = 32;
@@ -14,6 +28,9 @@ int main(){
     std::vector<Entity*> entities;
     //add one entity per grid
     auto aoi = AOIGrid(width, height);
+    aoi.setEnterMessageCB(enterNotify);
+    aoi.setLeaveMessageCB(leaveNotify);
+    aoi.setMoveMessageCB(moveNotify);
     int idx = 1;
     for(int i = startx; i< width; i=i+GX){
         for(int j = starty; j< height; j=j+GY){
