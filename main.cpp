@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include<vector>
 #include "entity.h"
-#include "AOIGrid.h"
+#include "AOIManager.h"
 
 using namespace AOI;
 
@@ -21,19 +21,21 @@ void moveNotify(const Entity& entity, uint64_t watcher_id){
 int main(){
     int width = 32;
     int height = 32;
+    int gx = 8;
+    int gy = 8;
 
-    int startx = GX/2;
-    int starty = GY/2;
+    int startx = gx/2;
+    int starty = gy/2;
 
     std::vector<Entity*> entities;
     //add one entity per grid
-    auto aoi = AOIGrid(width, height);
+    auto aoi = AOIManager(width, height, gx, gy);
     aoi.setEnterMessageCB(enterNotify);
     aoi.setLeaveMessageCB(leaveNotify);
     aoi.setMoveMessageCB(moveNotify);
     int idx = 1;
-    for(int i = startx; i< width; i=i+GX){
-        for(int j = starty; j< height; j=j+GY){
+    for(int i = startx; i< width; i=i+gx){
+        for(int j = starty; j< height; j=j+gy){
             Entity* tmp = new Entity(idx, i, j);
             idx++;
             entities.push_back(tmp);
@@ -53,4 +55,4 @@ int main(){
     */
 }
 
-//g++ -o test Entity.cpp AOIGrid.cpp main.cpp --std=c++11
+//g++ -o test Entity.cpp AOIGrid.cpp AOIManager.cpp main.cpp --std=c++11
