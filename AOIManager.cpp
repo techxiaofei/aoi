@@ -1,4 +1,5 @@
 #include <math.h>
+#include "define.h"
 #include "AOIManager.h"
 
 namespace AOI{
@@ -18,7 +19,7 @@ void AOIManager::Enter(uint64_t id, int gid){
     }*/
     auto it = map_.find(gid);
     if (it != map_.end()){
-        it->second->Enter(id);
+        it->second->Enter(id, ENTITY_TYPE_PC);
     }
 }
 
@@ -38,7 +39,7 @@ void AOIManager::Leave(uint64_t id, int gid){
     */
    auto it = map_.find(gid);
    if (it != map_.end()){
-       it->second->Leave(id);
+       it->second->Leave(id, ENTITY_TYPE_PC);
    }
 }
 

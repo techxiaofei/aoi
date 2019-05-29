@@ -10,10 +10,6 @@
 
 #define FACTOR 100  //x*FACTOR+y
 
-#define ENTITY_TYPE_NPC 1
-#define ENTITY_TYPE_PC 2
-#define ENTITY_TYPE_ENEMY 3
-
 namespace AOI{
 
 class AOIManager{
@@ -49,8 +45,8 @@ private:
     int gx_;  //每个格子的宽度
     int gy_;  //每个格子的长度
 
-    typedef std::unordered_map<int, std::unordered_set<int>> GRIDS;  //gid=>(idlist)
-    GRIDS grids_;
+    //typedef std::unordered_map<int, std::unordered_set<int>> GRIDS;  //gid=>(idlist)
+    //GRIDS grids_;
 
     typedef std::unordered_map<int, std::shared_ptr<AOIGrid>> UnorderedMap;
     UnorderedMap map_;

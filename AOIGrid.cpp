@@ -3,13 +3,13 @@
 
 namespace AOI{
 
-void AOIGrid::Enter(int id){
-    entities_.insert(id);
-    printf("grid %d add id=%d\n", grid_id_, id);
+void AOIGrid::Enter(int entity_id, int type){
+    characters_.insert(entity_id);
+    printf("grid %d add id=%d\n", grid_id_, entity_id);
 }
 
-void AOIGrid::Leave(int id){
-    entities_.erase(id);
+void AOIGrid::Leave(int entity_id, int type){
+    characters_.erase(entity_id);
 
 }
 
@@ -22,7 +22,7 @@ void AOIGrid::GridEntities(std::unordered_set<uint64_t>& entities){
         }
     }
     */
-   for (auto entity_id : entities_){
+   for (auto entity_id : characters_){
        entities.insert(entity_id);
    }
 }
